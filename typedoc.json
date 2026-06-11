@@ -1,0 +1,11 @@
+{
+  "entryPoints": ["src/app", "src/data", "src/features", "src/motion", "src/ui"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/test/**"],
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "includeVersion": true,
+  "name": "Enterprise UX Motion Lab",
+  "readme": "none"
+}

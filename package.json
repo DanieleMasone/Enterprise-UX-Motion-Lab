@@ -1,0 +1,39 @@
+{
+  "name": "enterprise-ux-motion-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A production-grade React and TypeScript lab for functional enterprise UX micro-interactions.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "docs": "typedoc --options typedoc.json",
+    "pages:build": "npm run test:coverage && npm run docs && npm run build && node scripts/prepare-pages.mjs",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "motion": "^12.40.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/coverage-v8": "^4.1.8",
+    "jsdom": "^29.1.1",
+    "typedoc": "^0.28.19",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

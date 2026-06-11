@@ -1,261 +1,163 @@
 # Enterprise UX Motion Lab
 
-A focused UX and micro-interaction laboratory for enterprise-grade, data-heavy interfaces.
+[![CI and GitHub Pages](https://github.com/DanieleMasone/Enterprise-UX-Motion-Lab/actions/workflows/pages.yml/badge.svg)](https://github.com/DanieleMasone/Enterprise-UX-Motion-Lab/actions/workflows/pages.yml)
+[![React](https://img.shields.io/badge/React-19-0f766e)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-2563eb)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8-9a6200)](https://vite.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-18201d)](LICENSE)
 
-This project is not an animation showcase.  
-It explores how motion can improve usability, perceived performance, feedback quality, progressive disclosure, and operational clarity in complex business applications.
+A production-grade React and TypeScript portfolio project for functional UX micro-interactions in dense enterprise interfaces.
 
----
+This is not a decorative animation gallery. The app models an internal risk operations dashboard where motion helps users understand state changes, preserve orientation, expose detail progressively, and maintain confidence during loading or degraded telemetry.
 
-## Why this project exists
+**Links**
 
-Most animated UI demos are visually pleasant but operationally weak:
+- [Live demo](https://danielemasone.github.io/enterprise-ux-motion-lab/)
+- [Coverage report](https://danielemasone.github.io/enterprise-ux-motion-lab/coverage/)
+- [TypeDoc documentation](https://danielemasone.github.io/enterprise-ux-motion-lab/docs/)
+- [CI workflow](https://github.com/DanieleMasone/Enterprise-UX-Motion-Lab/actions/workflows/pages.yml)
 
-- too slow
-- too decorative
-- low information density
-- poor keyboard workflows
-- unsuitable for enterprise dashboards
-- disconnected from real product constraints
+## Product Surface
 
-This project takes the opposite direction: motion is treated as a functional design system layer.
+The application simulates a risk-monitoring dashboard used by operations analysts, platform owners, risk managers, and audit stakeholders.
 
----
+Implemented capabilities:
 
-## Core goals
-
-- Demonstrate functional micro-interactions in dense enterprise UIs
-- Define a consistent motion system instead of ad-hoc animations
-- Improve perceived performance through intelligent loading states
-- Use progressive disclosure to reduce cognitive load
-- Preserve accessibility and usability under real workflow constraints
-- Show architectural thinking, not isolated component demos
-
----
-
-## Product scenario
-
-The application simulates a risk-monitoring dashboard used by internal enterprise teams.
-
-Typical users:
-
-- operations analysts
-- risk managers
-- platform owners
-- technical support teams
-- internal audit stakeholders
-
-The interface prioritizes:
-
-- fast scanning
-- compact layouts
-- keyboard-driven actions
-- clear state transitions
-- actionable feedback
-- controlled visual noise
-
----
-
-## Features
-
-### Enterprise dashboard
-
-- KPI summary cards
-- dense data table
-- risk status indicators
-- expandable detail panels
-- compact and comfortable density modes
-
-### Command palette
-
-- keyboard-first navigation
-- action discovery
-- workflow shortcuts
-- operational commands
-
-### Motion system
-
-Centralized motion tokens for:
-
-- duration
-- easing
-- hover feedback
-- pressed states
-- layout transitions
-- reduced-motion behavior
-
-### Progressive disclosure
-
-Expandable panels reveal secondary information only when needed:
-
-- root cause
-- owner
-- SLA
-- recommended action
-- audit context
-
-### Intelligent loading states
-
-The project avoids generic spinners and uses:
-
-- skeleton loading
-- optimistic UI transitions
-- delayed loading feedback
-- empty states
-- degraded states
-
----
-
-## Tech stack
-
-- React
-- TypeScript
-- Vite
-- Framer Motion / Motion
-- CSS
-- Vitest
-
----
+- KPI cards for fast operational scanning
+- Dense anomaly and risk table with priority metadata
+- Search, region, status, and severity filters
+- Expandable detail panels with root cause, recommendation, and audit context
+- Command palette opened with `Ctrl+K` or `Cmd+K`
+- Dark mode and density toggles
+- Loading skeletons, empty states, and degraded telemetry disclosure
+- Reduced-motion support through system preference detection
+- Keyboard-accessible controls, focus states, and command workflows
+- Responsive layout with horizontal table overflow where dense columns need space
 
 ## Architecture
 
 ```txt
 src/
-  app/
+  app/                    Global app state and shell
+  data/                   Domain records and KPI models
   features/
-    command-palette/
-    dashboard/
-    loading-states/
-  motion/
-  ui/
-  data/
-  styles/
+    command-palette/      Command action model and palette UI
+    dashboard/            Risk queue, filters, KPI scan, details
+    loading-states/       Data resilience state copy
+  motion/                 Motion tokens, transitions, reduced-motion policy
+  styles/                 Global design layer and responsive CSS
+  test/                   Shared test setup
+  ui/                     Reusable primitives
 ```
 
-The codebase is organized by product capability, not by technical artifact alone.
+The structure is feature-based because the project is meant to communicate maintainable product architecture, not isolated component demos. Shared UI primitives stay small. Domain logic such as filters and state transitions is pure where practical so it can be tested directly.
 
-This keeps the project closer to how maintainable enterprise frontend applications are usually structured.
+## Motion Principles
 
----
+Motion is treated as a governed design-system layer.
 
-## Motion principles
+- Use centralized tokens in `src/motion/motion.tokens.ts`
+- Request semantic transitions from `src/motion/transitions.ts`
+- Respect system reduced-motion preferences through `src/motion/reduced-motion.ts`
+- Keep transitions short enough for repeated enterprise workflows
+- Animate state changes, panel disclosure, list entry, and feedback only when it improves comprehension
+- Avoid decorative motion, slow flourishes, and attention traps
 
-### 1. Motion must explain state
+## Testing Strategy
 
-Animations are used to clarify what changed, not to decorate the screen.
+The test suite focuses on behavior that would matter in a real enterprise tool:
 
-### 2. Motion must be fast
+- Command palette search, execution, and Escape handling
+- Dark mode and density state changes
+- Filter narrowing and reset behavior
+- Expandable detail panel behavior
+- Loading, empty, and degraded states
+- Reduced-motion policy and transition collapse
+- Pure app-state and dashboard-filter helpers
 
-Enterprise users repeat workflows many times per day.  
-Slow transitions become friction.
+Coverage is generated with Vitest and V8 into `coverage/`, then copied into the GitHub Pages artifact under `/coverage/`.
 
-### 3. Motion must preserve density
+## Documentation
 
-The UI should remain compact and information-rich.
+TypeDoc generates API documentation for public primitives, motion policy, domain models, and shared helpers. TSDoc comments are intentionally selective: they explain reusable contracts and policy decisions without narrating obvious component internals.
 
-### 4. Motion must support keyboard workflows
+Generated documentation is copied into the Pages artifact under `/docs/`.
 
-Micro-interactions should not assume mouse-only usage.
+## Accessibility And UX Discipline
 
-### 5. Motion must respect reduced-motion preferences
+The interface keeps enterprise information density intact while supporting accessible workflows:
 
-Accessibility is a product requirement, not an optional enhancement.
+- Native buttons, inputs, and selects
+- `aria-pressed`, `aria-expanded`, `aria-controls`, status regions, and dialog semantics
+- Visible focus states
+- Keyboard command palette access
+- Reduced-motion support
+- Skeletons instead of generic loading spinners
+- Empty states with recovery actions
+- Degraded states that disclose risk without blocking work
 
----
+## Performance Considerations
 
-## Key design decisions
+The project keeps interaction cost low:
 
-### Vite over heavier frameworks
+- No backend or unnecessary state management library
+- Short, centralized transitions
+- No long-running decorative animations
+- Vite production build
+- Lightweight static Pages output
+- Pure filter helpers with small in-memory data
+- Generated artifacts excluded from source control
 
-Vite keeps the project lightweight and focused on frontend interaction quality.
+## CI/CD And Pages
 
-This project does not need SSR, routing complexity, or backend integration to demonstrate the intended architectural and UX concepts.
+`.github/workflows/pages.yml` runs:
 
-### Feature-based structure
+1. `npm ci`
+2. `npm run typecheck`
+3. `npm run test`
+4. `npm run test:coverage`
+5. `npm run build`
+6. `npm run docs`
+7. `node scripts/prepare-pages.mjs`
+8. GitHub Pages upload and deployment
 
-The project uses feature folders to keep UI, behavior, and domain-specific logic close together.
+The published artifact contains:
 
-This is more scalable than a flat `components/` directory for a portfolio project that wants to communicate architectural maturity.
+- `/enterprise-ux-motion-lab/` for the app
+- `/enterprise-ux-motion-lab/coverage/` for coverage
+- `/enterprise-ux-motion-lab/docs/` for TypeDoc
 
-### Centralized motion tokens
+## Trade-Offs
 
-Animation timing and easing are not hardcoded across components.
+- No router: the lab is a single operational surface, so routing would add structure without product value.
+- No global state library: local React state and pure helpers are enough for this scope.
+- No Playwright: component and interaction tests cover the current risk without adding browser automation maintenance.
+- Plain CSS: the design system is small, static, and easier to audit without a styling dependency.
+- Static data: the portfolio goal is frontend UX and architecture, not backend integration.
 
-This allows motion to behave like a governed design-system concern.
+## Local Development
 
-### No decorative animation layer
+```bash
+npm install
+npm run dev
+```
 
-Every animation should answer one of these questions:
+Useful scripts:
 
-- What changed?
-- Where did it move?
-- What is interactive?
-- Is the system working?
-- What should the user do next?
+```bash
+npm run typecheck
+npm run test
+npm run test:coverage
+npm run docs
+npm run build
+npm run pages:build
+```
 
----
-
-## Testing strategy
-
-Planned testing layers:
-
-- unit tests for interaction state logic
-- component tests for critical UI behavior
-- accessibility checks for keyboard interaction
-- visual regression for motion-sensitive components
-- performance budget validation for interaction latency
-
----
-
-## Performance considerations
-
-The project is designed around controlled motion:
-
-- short transition durations
-- limited layout thrashing
-- reduced unnecessary re-renders
-- no long-running decorative animations
-- clear separation between data state and presentation state
-
----
+`npm run pages:build` produces `pages-dist/` with the app, coverage report, docs, and `.nojekyll`.
 
 ## Roadmap
 
-- [ ] Add command palette
-- [ ] Add expandable risk detail panels
-- [ ] Add animated filters
-- [ ] Add skeleton and degraded loading states
-- [ ] Add reduced-motion support
-- [ ] Add keyboard navigation
-- [ ] Add interaction tests
-- [ ] Add accessibility notes
-- [ ] Add performance budget documentation
-- [ ] Add screenshots and short interaction recordings
-
----
-
-## What this project demonstrates
-
-This repository is intended to show:
-
-- frontend architecture discipline
-- UX maturity
-- design-system thinking
-- enterprise UI judgment
-- accessibility awareness
-- performance-conscious interaction design
-- ability to reason beyond visual implementation
-
----
-
-## Positioning
-
-This is not a beginner React animation project.
-
-It is a technical portfolio project focused on the intersection of:
-
-- frontend architecture
-- enterprise UX
-- motion design
-- interaction quality
-- maintainable component systems
+- Add a small interaction performance note with measured build and bundle data
+- Add one or two visual screenshots after the first Pages deployment
+- Add optional keyboard roving behavior inside the command palette if command volume grows
+- Add a lightweight accessibility audit checklist after the UI settles
