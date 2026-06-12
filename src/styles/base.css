@@ -20,6 +20,8 @@
   --color-shadow: rgba(24, 32, 29, 0.12);
   --radius-sm: 4px;
   --radius-md: 8px;
+  --motion-duration-fast: 120ms;
+  --motion-ease-productive: cubic-bezier(0.2, 0, 0, 1);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;

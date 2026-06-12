@@ -57,7 +57,11 @@
   justify-content: center;
   min-height: 2.4rem;
   padding: 0.48rem 0.72rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease-productive),
+    border-color var(--motion-duration-fast) var(--motion-ease-productive),
+    color var(--motion-duration-fast) var(--motion-ease-productive);
+  white-space: nowrap;
 }
 
 .button--primary {
@@ -356,6 +360,7 @@
 }
 
 .risk-table-shell {
+  -webkit-overflow-scrolling: touch;
   overflow-x: auto;
 }
 

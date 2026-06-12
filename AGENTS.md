@@ -32,7 +32,12 @@ This repository demonstrates senior frontend architecture and functional UX moti
 - Update tests when behavior changes.
 - Prefer meaningful interaction assertions over render-only tests.
 - Cover command palette behavior, filters, expandable panels, loading states, empty states, degraded states, theme and density controls, and reduced-motion policy where relevant.
+- Keep Playwright E2E tests focused on critical user journeys and real UX behavior.
+- Do not add brittle screenshot tests unless a visual regression risk clearly justifies them.
+- Keep Playwright reports and traces out of git.
+- Preserve CI runtime by avoiding unnecessary browser matrices and oversized E2E suites.
 - Keep `npm run test` and `npm run test:coverage` passing.
+- Keep `npm run test:e2e` passing when browser-level behavior changes.
 - Do not fake coverage.
 
 ## Documentation Expectations
@@ -51,6 +56,7 @@ This repository demonstrates senior frontend architecture and functional UX moti
   - `/enterprise-ux-motion-lab/coverage/`
   - `/enterprise-ux-motion-lab/docs/`
 - Keep the CI workflow focused: install, typecheck, test, coverage, build, docs, package, deploy.
+- Install Playwright browsers only for the E2E step, and use Chromium unless another browser adds clear value.
 - Avoid obsolete GitHub Actions versions.
 
 ## Dependency Policy
@@ -76,5 +82,6 @@ This repository demonstrates senior frontend architecture and functional UX moti
 - Do not remove reduced-motion support.
 - Do not make the table unusable on mobile by squashing columns.
 - Do not commit generated `dist/`, `coverage/`, `docs/`, or `pages-dist/` output.
+- Do not commit `playwright-report/`, `test-results/`, or `blob-report/` output.
 - Do not leave TODO-only features.
 - Do not weaken tests, docs, or Pages packaging to make a build pass.

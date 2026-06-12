@@ -68,6 +68,7 @@ Motion is treated as a governed design-system layer.
 The test suite focuses on behavior that would matter in a real enterprise tool:
 
 - Command palette search, execution, and Escape handling
+- Browser-level command palette keyboard flow with `Ctrl+K`
 - Dark mode and density state changes
 - Filter narrowing and reset behavior
 - Expandable detail panel behavior
@@ -75,7 +76,7 @@ The test suite focuses on behavior that would matter in a real enterprise tool:
 - Reduced-motion policy and transition collapse
 - Pure app-state and dashboard-filter helpers
 
-Coverage is generated with Vitest and V8 into `coverage/`, then copied into the GitHub Pages artifact under `/coverage/`.
+Coverage is generated with Vitest and V8 into `coverage/`, then copied into the GitHub Pages artifact under `/coverage/`. Playwright stays deliberately small: Chromium covers smoke, command palette, theme and density persistence, filtering, disclosure, and resilience states without adding a browser matrix or screenshot maintenance burden.
 
 ## Documentation
 
@@ -108,6 +109,30 @@ The project keeps interaction cost low:
 - Pure filter helpers with small in-memory data
 - Generated artifacts excluded from source control
 
+## Tooling
+
+- React 19, TypeScript 6, and Vite 8 for the application surface
+- Motion for functional, token-governed UI transitions
+- Vitest, Testing Library, jsdom, and V8 coverage for unit and component behavior
+- Playwright for focused browser-level user journeys
+- TypeDoc for generated API documentation
+- GitHub Actions and GitHub Pages for verification, packaging, and deployment
+
+## Quality Gates
+
+Local and CI verification are intentionally explicit:
+
+1. `npm ci`
+2. `npm run typecheck`
+3. `npm run test`
+4. `npm run test:coverage`
+5. `npm run build`
+6. `npm run docs`
+7. `npm run test:e2e`
+8. `npm run pages:build`
+
+Generated `dist/`, `coverage/`, `docs/`, `pages-dist/`, Playwright reports, and test results stay out of source control.
+
 ## CI/CD And Pages
 
 `.github/workflows/pages.yml` runs:
@@ -118,8 +143,10 @@ The project keeps interaction cost low:
 4. `npm run test:coverage`
 5. `npm run build`
 6. `npm run docs`
-7. `node scripts/prepare-pages.mjs`
-8. GitHub Pages upload and deployment
+7. `npx playwright install --with-deps chromium`
+8. `npm run test:e2e`
+9. `node scripts/prepare-pages.mjs`
+10. GitHub Pages upload and deployment
 
 The published artifact contains:
 
@@ -131,7 +158,7 @@ The published artifact contains:
 
 - No router: the lab is a single operational surface, so routing would add structure without product value.
 - No global state library: local React state and pure helpers are enough for this scope.
-- No Playwright: component and interaction tests cover the current risk without adding browser automation maintenance.
+- Focused Playwright only: critical journeys run in Chromium without screenshot baselines or a browser matrix.
 - Plain CSS: the design system is small, static, and easier to audit without a styling dependency.
 - Static data: the portfolio goal is frontend UX and architecture, not backend integration.
 
@@ -148,6 +175,9 @@ Useful scripts:
 npm run typecheck
 npm run test
 npm run test:coverage
+npm run test:e2e
+npm run test:e2e:ui
+npm run test:all
 npm run docs
 npm run build
 npm run pages:build

@@ -6,6 +6,9 @@ dist/
 pages-dist/
 coverage/
 docs/
+playwright-report/
+test-results/
+blob-report/
 
 # Local environment
 .env
@@ -15,6 +18,7 @@ docs/
 # Tooling caches
 .vite/
 .vitest/
+playwright/.cache/
 node_modules/.tmp/
 *.tsbuildinfo
 

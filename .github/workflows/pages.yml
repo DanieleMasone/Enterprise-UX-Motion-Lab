@@ -48,6 +48,12 @@ jobs:
       - name: Generate docs
         run: npm run docs
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E
+        run: npm run test:e2e
+
       - name: Prepare Pages artifact
         run: node scripts/prepare-pages.mjs
 

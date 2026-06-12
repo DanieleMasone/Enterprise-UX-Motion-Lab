@@ -16,10 +16,26 @@ describe("risk filters", () => {
     expect(filtered[0]?.id).toBe("RISK-1042");
   });
 
+  it("returns no records when any active constraint does not match", () => {
+    expect(
+      filterRiskRecords(riskRecords, {
+        ...defaultRiskFilters,
+        query: "payments",
+        status: "contained"
+      })
+    ).toHaveLength(0);
+  });
+
   it("does not allow severity filters to become empty accidentally", () => {
     const filters = toggleSeverityFilter({ ...defaultRiskFilters, severities: ["critical"] }, "critical");
 
     expect(filters.severities).toEqual(["critical"]);
+  });
+
+  it("adds a severity back into the active filter set", () => {
+    const filters = toggleSeverityFilter({ ...defaultRiskFilters, severities: ["critical"] }, "high");
+
+    expect(filters.severities).toEqual(["critical", "high"]);
   });
 
   it("derives sorted unique regions for the filter control", () => {

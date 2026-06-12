@@ -52,4 +52,28 @@ describe("CommandPalette", () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("runs the first filtered command with Enter", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    const onTheme = vi.fn();
+
+    render(<CommandPalette actions={getActions(onTheme)} onClose={onClose} open reduceMotion />);
+
+    await user.type(screen.getByLabelText(/command search/i), "dark");
+    await user.keyboard("{Enter}");
+
+    expect(onTheme).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a useful empty state when no command matches", async () => {
+    const user = userEvent.setup();
+
+    render(<CommandPalette actions={getActions()} onClose={vi.fn()} open reduceMotion />);
+
+    await user.type(screen.getByLabelText(/command search/i), "archive");
+
+    expect(screen.getByText("No matching commands")).toBeInTheDocument();
+  });
 });

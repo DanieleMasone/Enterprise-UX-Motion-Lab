@@ -10,6 +10,10 @@ import {
   getNextDataState,
   getNextDensity,
   getNextTheme,
+  getStoredDensity,
+  getStoredTheme,
+  persistDensity,
+  persistTheme,
   type DataState,
   type DensityMode,
   type ThemeMode
@@ -19,8 +23,8 @@ import {
  * Application shell that coordinates global UX state and command workflows.
  */
 export function App() {
-  const [theme, setTheme] = useState<ThemeMode>("light");
-  const [density, setDensity] = useState<DensityMode>("compact");
+  const [theme, setTheme] = useState<ThemeMode>(() => getStoredTheme());
+  const [density, setDensity] = useState<DensityMode>(() => getStoredDensity());
   const [dataState, setDataState] = useState<DataState>("live");
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>("RISK-1042");
@@ -32,6 +36,8 @@ export function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.density = density;
+    persistTheme(theme);
+    persistDensity(density);
   }, [density, theme]);
 
   useEffect(() => {
@@ -139,7 +145,7 @@ export function App() {
               value={dataState}
             />
             <Button onClick={() => setCommandPaletteOpen(true)} variant="primary">
-              Commands <kbd>Ctrl K</kbd>
+              Commands <kbd>Ctrl/Cmd K</kbd>
             </Button>
           </div>
         </header>

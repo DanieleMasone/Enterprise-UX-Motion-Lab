@@ -16,6 +16,10 @@ function createMatchMedia(matches: boolean) {
 }
 
 beforeEach(() => {
+  window.localStorage.clear();
+  delete document.documentElement.dataset.theme;
+  delete document.documentElement.dataset.density;
+
   Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: createMatchMedia(false)

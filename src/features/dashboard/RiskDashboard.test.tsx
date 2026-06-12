@@ -6,8 +6,14 @@ import type { DataState } from "../../app/app-state";
 import { RiskDashboard } from "./RiskDashboard";
 import { defaultRiskFilters, type RiskFilters } from "./filters";
 
-function DashboardHarness({ dataState = "live" }: { dataState?: DataState }) {
-  const [filters, setFilters] = useState<RiskFilters>(defaultRiskFilters);
+function DashboardHarness({
+  dataState = "live",
+  initialFilters = defaultRiskFilters
+}: {
+  dataState?: DataState;
+  initialFilters?: RiskFilters;
+}) {
+  const [filters, setFilters] = useState<RiskFilters>(initialFilters);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
@@ -38,6 +44,22 @@ describe("RiskDashboard", () => {
     expect(screen.getByText("Identity Provisioning")).toBeInTheDocument();
   });
 
+  it("applies region, status, and severity controls", async () => {
+    const user = userEvent.setup();
+    render(<DashboardHarness />);
+
+    await user.selectOptions(screen.getByLabelText(/filter by region/i), "AP-South");
+    expect(screen.getByText("Customer Data Lake")).toBeInTheDocument();
+    expect(screen.queryByText("Payments Gateway")).not.toBeInTheDocument();
+
+    await user.selectOptions(screen.getByLabelText(/filter by status/i), "investigating");
+    expect(screen.getByText("Customer Data Lake")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "critical" }));
+    expect(screen.getByRole("button", { name: "critical" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByText("Customer Data Lake")).toBeInTheDocument();
+  });
+
   it("expands and collapses risk detail panels", async () => {
     const user = userEvent.setup();
     render(<DashboardHarness />);
@@ -58,6 +80,21 @@ describe("RiskDashboard", () => {
     render(<DashboardHarness dataState="loading" />);
 
     expect(screen.getByRole("status", { name: /loading operational risk data/i })).toBeInTheDocument();
+  });
+
+  it("shows a recoverable empty state when filters remove every row", async () => {
+    const user = userEvent.setup();
+    render(<DashboardHarness initialFilters={{ ...defaultRiskFilters, query: "not-a-real-service" }} />);
+
+    expect(screen.getByText("No risk signals match filters")).toBeInTheDocument();
+
+    const emptyState = screen.getByText("No risk signals match filters").closest("section");
+
+    expect(emptyState).not.toBeNull();
+
+    await user.click(within(emptyState!).getByRole("button", { name: "Clear filters" }));
+
+    expect(screen.getByText("Payments Gateway")).toBeInTheDocument();
   });
 
   it("shows an empty state with no fake table rows", () => {

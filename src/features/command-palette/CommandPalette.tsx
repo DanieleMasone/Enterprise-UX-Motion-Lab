@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { motionTokens } from "../../motion/motion.tokens";
 import { getTransition } from "../../motion/transitions";
 import { EmptyState } from "../../ui";
@@ -49,6 +49,15 @@ export function CommandPalette({ actions, open, reduceMotion, onClose }: Command
     onClose();
   };
 
+  const runFirstAction = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter" || filteredActions.length === 0) {
+      return;
+    }
+
+    event.preventDefault();
+    runAction(filteredActions[0]);
+  };
+
   return (
     <AnimatePresence>
       {open ? (
@@ -81,6 +90,7 @@ export function CommandPalette({ actions, open, reduceMotion, onClose }: Command
               aria-label="Command search"
               className="command-palette__search"
               onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={runFirstAction}
               placeholder="Search commands"
               ref={searchRef}
               type="search"
