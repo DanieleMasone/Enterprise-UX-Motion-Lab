@@ -119,7 +119,7 @@ export function App() {
             <strong>Risk operations control surface</strong>
             <span>{dataStateCopy.label}: {dataStateCopy.description}</span>
           </div>
-          <div className="app-header__controls" aria-label="Application controls">
+          <div className="app-header__controls" role="group" aria-label="Application controls">
             <SegmentedControl
               ariaLabel="Theme"
               onChange={setTheme}

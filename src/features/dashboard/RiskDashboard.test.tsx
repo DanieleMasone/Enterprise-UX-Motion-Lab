@@ -48,6 +48,8 @@ describe("RiskDashboard", () => {
     const user = userEvent.setup();
     render(<DashboardHarness />);
 
+    expect(screen.getByRole("group", { name: /filter by severity/i })).toBeInTheDocument();
+
     await user.selectOptions(screen.getByLabelText(/filter by region/i), "AP-South");
     expect(screen.getByText("Customer Data Lake")).toBeInTheDocument();
     expect(screen.queryByText("Payments Gateway")).not.toBeInTheDocument();

@@ -106,7 +106,7 @@ The interface keeps enterprise information density intact while supporting acces
 
 ## Interaction Performance
 
-Production builds are measured with Vite output and the lightweight `npm run build:stats` script. The current production build emits the app shell plus hashed CSS and JS assets; the most recent local build reported roughly `337.62 kB` JavaScript (`107.40 kB` gzip) and `15.33 kB` CSS (`3.50 kB` gzip).
+Production builds are checked with Vite output and the lightweight `npm run build:stats` script. The current Vite production output emits the app shell plus hashed CSS and JS assets; the most recent local build reported roughly `337.65 kB` JavaScript (`107.40 kB` gzip) and `15.44 kB` CSS (`3.52 kB` gzip).
 
 The project keeps interaction cost low by design:
 

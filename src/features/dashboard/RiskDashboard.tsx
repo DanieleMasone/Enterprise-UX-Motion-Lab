@@ -146,7 +146,7 @@ export function RiskDashboard({
               ))}
             </select>
           </label>
-          <div className="severity-filter" aria-label="Filter by severity">
+          <div className="severity-filter" role="group" aria-label="Filter by severity">
             {severityOrder.map((severity) => (
               <motion.button
                 aria-pressed={filters.severities.includes(severity)}

@@ -13,6 +13,7 @@ Use this checklist when changing interaction behavior, layout density, motion, o
 ## Semantics And Focus
 
 - Native `button`, `input`, and `select` elements are preferred over custom controls.
+- Related control clusters expose group semantics when a visible label is not enough.
 - Segmented controls expose selected state with `aria-pressed`.
 - Expandable table details expose `aria-expanded` and `aria-controls`.
 - Quantitative indicators such as confidence use semantic roles such as `meter`.
@@ -35,6 +36,7 @@ Use this checklist when changing interaction behavior, layout density, motion, o
 ## Responsive Enterprise Layout
 
 - Dense tables keep horizontal scrolling inside the table shell instead of collapsing into unreadable cards.
+- Expanded narrative detail panels wrap inside the visible table shell even when dense table columns scroll horizontally.
 - Filters, KPI cards, detail panels, and dialogs do not create page-level horizontal overflow at mobile widths.
 - Touch targets remain readable at 360px wide.
 - Command palette stays within the viewport on desktop and mobile.

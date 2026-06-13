@@ -123,6 +123,25 @@ test.describe("risk operations dashboard", () => {
 
       if (width <= 1024) {
         expect(layout.tableShellScrolls, `${width}px table should scroll inside its shell`).toBe(true);
+
+        const detailLayout = await page.locator(".risk-detail").evaluate((element) => {
+          const detail = element as HTMLElement;
+          const rect = detail.getBoundingClientRect();
+
+          return {
+            right: rect.right,
+            clientWidth: detail.clientWidth,
+            scrollWidth: detail.scrollWidth
+          };
+        });
+
+        expect(detailLayout.right, `${width}px detail panel should fit the visible table shell`).toBeLessThanOrEqual(
+          width + 1
+        );
+        expect(
+          detailLayout.scrollWidth - detailLayout.clientWidth,
+          `${width}px detail panel text should wrap instead of clipping`
+        ).toBeLessThanOrEqual(1);
       }
 
       if (width === 1440 || width === 390) {

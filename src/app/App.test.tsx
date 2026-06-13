@@ -8,6 +8,8 @@ describe("App", () => {
     const user = userEvent.setup();
     render(<App />);
 
+    expect(screen.getByRole("group", { name: /application controls/i })).toBeInTheDocument();
+
     await user.click(screen.getByRole("button", { name: "Dark" }));
     await user.click(screen.getByRole("button", { name: "Comfortable" }));
 
