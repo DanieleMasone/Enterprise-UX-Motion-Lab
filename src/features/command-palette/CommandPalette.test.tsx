@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { CommandPalette } from "./CommandPalette";
 import type { CommandAction } from "./command-palette";
@@ -75,5 +76,48 @@ describe("CommandPalette", () => {
     await user.type(screen.getByLabelText(/command search/i), "archive");
 
     expect(screen.getByText("No matching commands")).toBeInTheDocument();
+  });
+
+  it("keeps keyboard focus inside the dialog and restores focus after close", async () => {
+    const user = userEvent.setup();
+
+    function Harness() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <>
+          <button onClick={() => setOpen(true)} type="button">
+            Open commands
+          </button>
+          <CommandPalette actions={getActions()} onClose={() => setOpen(false)} open={open} reduceMotion />
+        </>
+      );
+    }
+
+    render(<Harness />);
+
+    const launcher = screen.getByRole("button", { name: "Open commands" });
+    await user.click(launcher);
+
+    const search = screen.getByLabelText(/command search/i);
+    await waitFor(() => expect(search).toHaveFocus());
+
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(screen.getByRole("button", { name: /clear filters/i })).toHaveFocus();
+
+    await user.keyboard("{Tab}");
+    expect(search).toHaveFocus();
+
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(launcher).toHaveFocus());
+  });
+
+  it("prevents tab escape when no focusable dialog control is available", () => {
+    render(<CommandPalette actions={[]} onClose={vi.fn()} open reduceMotion />);
+
+    const dialog = screen.getByRole("dialog", { name: /command palette/i });
+    vi.spyOn(dialog, "querySelectorAll").mockReturnValue([] as unknown as NodeListOf<HTMLElement>);
+
+    expect(fireEvent.keyDown(dialog, { key: "Tab" })).toBe(false);
   });
 });

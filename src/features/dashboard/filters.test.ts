@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { riskRecords } from "../../data";
-import { defaultRiskFilters, filterRiskRecords, getRiskRegions, toggleSeverityFilter } from "./filters";
+import {
+  areRiskFiltersDefault,
+  defaultRiskFilters,
+  filterRiskRecords,
+  getRiskRegions,
+  toggleSeverityFilter
+} from "./filters";
 
 describe("risk filters", () => {
   it("filters records by query, status, region, and severity", () => {
@@ -30,6 +36,14 @@ describe("risk filters", () => {
     const filters = toggleSeverityFilter({ ...defaultRiskFilters, severities: ["critical"] }, "critical");
 
     expect(filters.severities).toEqual(["critical"]);
+  });
+
+  it("detects the default filter state without depending on severity order", () => {
+    expect(areRiskFiltersDefault({ ...defaultRiskFilters, severities: ["low", "medium", "high", "critical"] })).toBe(
+      true
+    );
+    expect(areRiskFiltersDefault({ ...defaultRiskFilters, query: "payments" })).toBe(false);
+    expect(areRiskFiltersDefault({ ...defaultRiskFilters, severities: ["critical"] })).toBe(false);
   });
 
   it("adds a severity back into the active filter set", () => {

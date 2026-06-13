@@ -6,6 +6,7 @@ import { motionTokens } from "../../motion/motion.tokens";
 import { getTransition } from "../../motion/transitions";
 import { Button, DegradedBanner, EmptyState, SkeletonBlock, StatusBadge } from "../../ui";
 import {
+  areRiskFiltersDefault,
   defaultRiskFilters,
   filterRiskRecords,
   getRiskRegions,
@@ -47,7 +48,7 @@ export function RiskDashboard({
   const sourceRecords = dataState === "empty" ? [] : dataState === "degraded" ? records.slice(0, 4) : records;
   const filteredRecords = filterRiskRecords(sourceRecords, filters);
   const regions = getRiskRegions(records);
-  const isFiltered = JSON.stringify(filters) !== JSON.stringify(defaultRiskFilters);
+  const isFiltered = !areRiskFiltersDefault(filters);
 
   const updateQuery = (event: ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({ ...filters, query: event.target.value });
@@ -74,7 +75,10 @@ export function RiskDashboard({
             className="kpi-card"
             initial={{ opacity: 0, y: reduceMotion ? 0 : motionTokens.distance.subtle }}
             key={metric.id}
-            transition={{ ...getTransition("list", reduceMotion), delay: reduceMotion ? 0 : index * 0.025 }}
+            transition={{
+              ...getTransition("list", reduceMotion),
+              delay: reduceMotion ? 0 : index * motionTokens.stagger.listItem
+            }}
           >
             <div className="kpi-card__topline">
               <span>{metric.label}</span>
@@ -264,7 +268,14 @@ function RiskTableRow({ expanded, record, reduceMotion, onToggle }: RiskTableRow
         </td>
         <td>{record.owner}</td>
         <td>
-          <span className="confidence-meter" aria-label={`${record.confidence}% confidence`}>
+          <span
+            aria-label={`${record.confidence}% confidence`}
+            aria-valuemax={100}
+            aria-valuemin={0}
+            aria-valuenow={record.confidence}
+            className="confidence-meter"
+            role="meter"
+          >
             <span style={{ width: `${record.confidence}%` }} />
           </span>
           {record.confidence}%

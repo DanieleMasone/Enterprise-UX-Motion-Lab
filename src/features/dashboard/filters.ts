@@ -17,6 +17,19 @@ export const defaultRiskFilters: RiskFilters = {
 };
 
 /**
+ * Resolves whether filters are back at the dashboard's default state.
+ */
+export function areRiskFiltersDefault(filters: RiskFilters): boolean {
+  return (
+    filters.query === defaultRiskFilters.query &&
+    filters.region === defaultRiskFilters.region &&
+    filters.status === defaultRiskFilters.status &&
+    filters.severities.length === defaultRiskFilters.severities.length &&
+    defaultRiskFilters.severities.every((severity) => filters.severities.includes(severity))
+  );
+}
+
+/**
  * Filters operational risk records using the dashboard's visible controls.
  */
 export function filterRiskRecords(records: RiskRecord[], filters: RiskFilters): RiskRecord[] {

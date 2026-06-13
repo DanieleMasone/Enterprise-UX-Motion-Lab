@@ -110,4 +110,10 @@ describe("RiskDashboard", () => {
     expect(screen.getByText("Telemetry delay detected")).toBeInTheDocument();
     expect(screen.getByText("Payments Gateway")).toBeInTheDocument();
   });
+
+  it("exposes confidence as a semantic meter", () => {
+    render(<DashboardHarness />);
+
+    expect(screen.getByRole("meter", { name: "94% confidence" })).toHaveAttribute("aria-valuenow", "94");
+  });
 });

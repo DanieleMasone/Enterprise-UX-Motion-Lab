@@ -13,6 +13,8 @@ async function openCommandPaletteWithShortcut(page: Page) {
   return dialog;
 }
 
+const auditedViewports = [1920, 1440, 1280, 1024, 768, 430, 390, 375, 360];
+
 test.describe("risk operations dashboard", () => {
   test("loads the operational surface", async ({ page }) => {
     await page.goto("./");
@@ -92,5 +94,49 @@ test.describe("risk operations dashboard", () => {
     await page.getByRole("button", { name: "Degraded" }).click();
     await expect(page.getByText("Telemetry delay detected")).toBeVisible();
     await expect(page.getByText("Payments Gateway")).toBeVisible();
+  });
+
+  test("keeps responsive layouts readable without page-level horizontal overflow", async ({ page }) => {
+    for (const width of auditedViewports) {
+      await page.setViewportSize({ width, height: width >= 768 ? 900 : 780 });
+      await page.goto("./");
+
+      await expect(page.getByRole("heading", { name: "Operational risk queue" })).toBeVisible();
+
+      const layout = await page.evaluate(() => {
+        const tableShell = document.querySelector<HTMLElement>(".risk-table-shell");
+        const filters = document.querySelector<HTMLElement>(".filters");
+        const summary = document.querySelector<HTMLElement>(".dashboard__summary");
+        const documentWidth = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
+
+        return {
+          documentOverflowX: documentWidth - window.innerWidth,
+          filterRight: filters?.getBoundingClientRect().right ?? 0,
+          summaryRight: summary?.getBoundingClientRect().right ?? 0,
+          tableShellScrolls: tableShell ? tableShell.scrollWidth > tableShell.clientWidth : false
+        };
+      });
+
+      expect(layout.documentOverflowX, `${width}px viewport should not overflow the page`).toBeLessThanOrEqual(1);
+      expect(layout.filterRight, `${width}px filters should fit viewport`).toBeLessThanOrEqual(width + 1);
+      expect(layout.summaryRight, `${width}px KPI summary should fit viewport`).toBeLessThanOrEqual(width + 1);
+
+      if (width <= 1024) {
+        expect(layout.tableShellScrolls, `${width}px table should scroll inside its shell`).toBe(true);
+      }
+
+      if (width === 1440 || width === 390) {
+        const dialog = await openCommandPaletteWithShortcut(page);
+        const dialogBox = await page.locator(".command-palette__dialog").boundingBox();
+
+        expect(dialogBox?.x ?? -1, `${width}px dialog should start inside viewport`).toBeGreaterThanOrEqual(0);
+        expect((dialogBox?.x ?? 0) + (dialogBox?.width ?? 0), `${width}px dialog should end inside viewport`).toBeLessThanOrEqual(
+          width
+        );
+
+        await page.keyboard.press("Escape");
+        await expect(dialog).toBeHidden();
+      }
+    }
   });
 });

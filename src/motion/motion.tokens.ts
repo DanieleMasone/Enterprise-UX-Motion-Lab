@@ -21,6 +21,9 @@ export const motionTokens = {
     panel: 8,
     overlay: 12
   },
+  stagger: {
+    listItem: 0.025
+  },
   scale: {
     press: 0.985,
     affordance: 1.01

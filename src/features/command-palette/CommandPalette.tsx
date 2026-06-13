@@ -17,16 +17,28 @@ export interface CommandPaletteProps {
  */
 export function CommandPalette({ actions, open, reduceMotion, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
+  const dialogRef = useRef<HTMLElement>(null);
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const filteredActions = useMemo(() => filterCommandActions(actions, query), [actions, query]);
 
   useEffect(() => {
     if (!open) {
       setQuery("");
+      const previous = previouslyFocusedElementRef.current;
+
+      if (previous?.isConnected) {
+        previous.focus();
+      }
+
+      previouslyFocusedElementRef.current = null;
       return;
     }
 
-    window.setTimeout(() => searchRef.current?.focus(), 0);
+    previouslyFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focusTimer = window.setTimeout(() => searchRef.current?.focus(), 0);
+
+    return () => window.clearTimeout(focusTimer);
   }, [open]);
 
   useEffect(() => {
@@ -58,6 +70,37 @@ export function CommandPalette({ actions, open, reduceMotion, onClose }: Command
     runAction(filteredActions[0]);
   };
 
+  const getDialogFocusableElements = () =>
+    Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+      ) ?? []
+    );
+
+  const keepFocusInDialog = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    const focusableElements = getDialogFocusableElements();
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement?.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement?.focus();
+    }
+  };
+
   return (
     <AnimatePresence>
       {open ? (
@@ -76,6 +119,8 @@ export function CommandPalette({ actions, open, reduceMotion, onClose }: Command
             initial={{ opacity: 0, y: reduceMotion ? 0 : motionTokens.distance.overlay }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: reduceMotion ? 0 : motionTokens.distance.subtle }}
+            onKeyDown={keepFocusInDialog}
+            ref={dialogRef}
             role="dialog"
             transition={getTransition("overlay", reduceMotion)}
           >
